@@ -1,6 +1,6 @@
-resource "local_file" "temp_html" {
-  content  = "<h1>${var.nginx_html_content}</h1>"
-  filename = "${path.module}/temp_index.html"
+resource "docker_image" "nginx_image" {
+  name = "nginx:latest"
+
 }
 
 resource "docker_container" "simple_nginx_container" {
@@ -9,8 +9,9 @@ resource "docker_container" "simple_nginx_container" {
   ports {
     internal = 80
     external = var.external_port
-  }  # Warte kurz, bis der Container gestartet ist
-  provisioner "local-exec" {
-    command = "docker cp ${local_file.temp_html.filename} ${self.name}:/usr/share/nginx/html/index.html"
+  }
+  upload {
+    content = var.nginx_html_content
+    file    = "/usr/share/nginx/html/index.html"
   }
 }
