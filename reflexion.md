@@ -45,3 +45,31 @@ Der Plan zeigt:
 
 So kann man sicher prüfen, ob alles wie gewünscht erstellt wird – **ohne schon etwas zu verändern**.
 
+# Reflexion Terraform Workflow (Variablen und Outputs)
+
+**Was hat der Befehl terraform apply getan, als du ihn zum ersten Mal mit deiner initialen Konfiguration (ohne Variablen) ausgeführt hast?**
+
+Terraform apply hat die im Code definierten Ressourcen (Docker-Image und Docker-Container) erstellt. Es wurde ein Nginx-Container mit festen Werten für Name und Port gestartet.
+
+**Was ist mit dem Terraform State (terraform.tfstate) passiert, nachdem du terraform apply und terraform destroy ausgeführt hast?**
+
+Nach terraform apply wurde der aktuelle Zustand der Infrastruktur in der Datei terraform.tfstate gespeichert. Nach terraform destroy wurden die Ressourcen gelöscht und der State entsprechend aktualisiert, sodass keine Ressourcen mehr verwaltet werden.
+
+**Wie haben die Variablen (variable {}, var.) deine Konfiguration flexibler und wiederverwendbarer gemacht, verglichen mit der initialen Konfiguration (ohne Variablen)?**
+
+Durch Variablen kann die Konfiguration leicht angepasst werden, ohne den Code zu ändern. Namen, Ports und Inhalte können für verschiedene Umgebungen wiederverwendet und angepasst werden.
+
+**Auf welche drei Arten hast du Werte an deine Input Variablen übergeben? Beschreibe kurz die Methode und ihre Priorität.**
+
+1. Standardwert in variables.tf (niedrigste Priorität)
+2. Übergabe per .tfvars-Datei (z.B. test.tfvars)
+3. Übergabe per CLI-Flag (z.B. -var 'name=value', höchste Priorität)
+
+**Was zeigen die Outputs (output {}, terraform output) an, nachdem du apply ausgeführt hast? Wofür sind sie nützlich?**
+
+Outputs zeigen die Werte der definierten Ausgaben, z.B. Containername, Port und HTML-Inhalt. Sie sind nützlich, um wichtige Informationen nach der Bereitstellung direkt anzuzeigen oder an andere Tools weiterzugeben.
+
+**Wie hast du den Inhalt der Variable nginx_html_content in die index.html Datei im laufenden Docker Container bekommen? Welche Terraform-Funktion (Provisioner) wurde dafür genutzt?**
+
+Der Inhalt wurde mit dem upload-Block innerhalb der docker_container-Ressource direkt in die index.html im Container geschrieben. Die upload-Funktion von Terraform wurde genutzt, um die Datei beim Erstellen des Containers zu platzieren. Ein Provisioner war dadurch nicht notwendig.
+
